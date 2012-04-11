@@ -1,0 +1,15 @@
+# Ignore directories only used at build time
+build/
+out/
+bin/
+dist/
+.settings/
+build.properties
+junit*.properties
+
+# IntelliJ IDEA
+workspace.xml
+.idea/dictionaries/
+
+# Mac OS/X
+.DS_Store

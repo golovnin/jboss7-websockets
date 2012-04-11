@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!--
+  ~ Copyright (c) 2012 Andrej Golovnin. All rights reserved.
+  ~ Use is subject to license terms.
+  -->
+
+<!--
+  This is a build file for use with the Apache ANT Tool, see
+  http://ant.apache.org/ for more information.
+-->
+<project name="jboss7-websockets" default="dist">
+
+    <property file="build.properties"/>
+    <property file="default.properties"/>
+    <property environment="env"/>
+
+    <!-- **************************************************************** -->
+    <!-- I N I T I A L I Z A T I O N                                      -->
+    <!-- **************************************************************** -->
+
+    <!-- Setup classpath -->
+    <target name="init">
+        <!-- make dirs -->
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.classes.dir}"/>
+        <mkdir dir="${build.main.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+
+    	<!-- copy resources -->
+        <copy todir="${build.main.dir}"
+        	  preservelastmodified="true"
+        	  overwrite="true"
+        >
+            <fileset dir="${src.main.dir}">
+                <exclude name="**/*.java"/>
+                <exclude name="**/overview.html"/>
+            </fileset>
+        </copy>
+
+    	<!-- Classpaths -->
+        <path id="classpath.main">
+        	<fileset dir="${libs.dir}">
+        		<include name="**/*.jar"/>
+            </fileset>
+            <pathelement location="${build.main.dir}"/>
+        </path>
+    </target>
+
+
+    <!-- **************************************************************** -->
+    <!-- C L E A N U P                                                    -->
+    <!-- **************************************************************** -->
+    <target name="clean" description="Cleans up">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+
+    <!-- ***************************************************************** -->
+    <!-- Compiling                                                         -->
+    <!-- ***************************************************************** -->
+    <target name="compile"
+    	    depends="init"
+    	    description="Compile project"
+    >
+        <javac srcdir           ="${src.main.dir}"
+			   destdir          ="${build.main.dir}"
+               fork             ="${build.compile.fork}"
+               debug            ="${build.compile.debug}"
+               depend           ="${build.compile.depend}"
+               deprecation      ="${build.compile.deprecation}"
+               nowarn           ="${build.compile.nowarn}"
+			   source           ="${build.compile.source}"
+			   target           ="${build.compile.target}"
+               classpathref     ="classpath.main"
+               encoding         ="UTF-8"
+        	   includeantruntime="false"
+       />
+    </target>
+
+
+    <!-- **************************************************************** -->
+    <!-- D I S T R I B U T I O N                                          -->
+    <!-- **************************************************************** -->
+    <target name="dist"
+    	    depends="clean, compile"
+            description="Builds the WAR file"
+    >
+        <war destfile="${dist.war}" compress="false"
+             duplicate="preserve" needxmlfile="false"
+        >
+            <lib dir="${libs.dir}">
+                <exclude name="javax.servlet-3.0.jar"/>
+            </lib>
+            <classes dir="${build.main.dir}"/>
+            <fileset dir="${src.resources.dir}">
+                <include name="**/*"/>
+            </fileset>
+            <manifest>
+                <attribute name="Built-By"               value="${user.name}"/>
+                <attribute name="Specification-Title"    value="${spec.title}"/>
+                <attribute name="Specification-Vendor"   value="${spec.vendor}"/>
+                <attribute name="Specification-Version"  value="${spec.version}"/>
+                <attribute name="Implementation-Title"   value="${impl.title}"/>
+                <attribute name="Implementation-Vendor"  value="${impl.vendor}"/>
+                <attribute name="Implementation-Version" value="${impl.version}"/>
+            </manifest>
+        </war>
+    </target>
+
+</project>

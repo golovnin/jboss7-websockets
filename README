@@ -1,0 +1,8 @@
+An modified example from Jetty project, which shows how you can add WebSockets
+support to an application in JBoss 7.
+
+Run "ant dist" to create the WAR file. The WAR file can be found in the dist
+directory. Copy the WAR file into the "standalone/deployments" folder of your
+JBoss 7 installation.
+
+The test application should be now accessible on http://localhost:8181/test.
